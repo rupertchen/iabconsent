@@ -1,10 +1,11 @@
 package iabconsent
 
 import (
-	"github.com/rupertchen/go-bits"
-	"time"
 	"encoding/base64"
 	"fmt"
+	"time"
+
+	"github.com/rupertchen/go-bits"
 )
 
 type ConsentReader struct {
