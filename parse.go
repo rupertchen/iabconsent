@@ -21,8 +21,8 @@ func (r *ConsentReader) ReadInt(n uint) int {
 }
 
 func (r *ConsentReader) ReadTime() time.Time {
-	// TODO
-	return time.Time{}
+	var ds = int64(r.ReadBits(36))
+	return time.Unix(ds/dsPerS, (ds%dsPerS)*nsPerDs).UTC()
 }
 
 func (r *ConsentReader) ReadString(n uint) string {
@@ -30,9 +30,14 @@ func (r *ConsentReader) ReadString(n uint) string {
 	return ""
 }
 
-func (r *ConsentReader) ReadBoolMap(n uint) map[int]bool {
-	// TODO
-	return make(map[int]bool)
+func (r *ConsentReader) ReadPurposes(n uint) map[int]bool {
+	var m = make(map[int]bool)
+	for i := uint(0); i < n; i++ {
+		if r.ReadBool() {
+			m[int(i)+1] = true
+		}
+	}
+	return m
 }
 
 // TODO: export rangeEntry or unexport this func
@@ -79,7 +84,7 @@ func Parse2(s string) (p *ParsedConsent, err error) {
 	p.consentScreen = r.ReadInt(6)
 	p.consentLanguage = r.ReadString(2)
 	p.vendorListVersion = r.ReadInt(12)
-	p.purposesAllowed = r.ReadBoolMap(24)
+	p.purposesAllowed = r.ReadPurposes(24)
 	p.maxVendorID = r.ReadInt(16)
 
 	var hasRanges = r.ReadBool()
@@ -88,7 +93,7 @@ func Parse2(s string) (p *ParsedConsent, err error) {
 		p.numEntries = r.ReadInt(12)
 		p.rangeEntries = r.ReadRangeEntries(uint(p.numEntries))
 	} else {
-		p.approvedVendorIDs = r.ReadBoolMap(uint(p.maxVendorID))
+		p.approvedVendorIDs = r.ReadPurposes(uint(p.maxVendorID))
 	}
 
 	return p, nil
