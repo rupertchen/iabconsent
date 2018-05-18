@@ -54,7 +54,7 @@ func (s *parseSuite) TestConsentReader_ReadString(c *check.C) {
 	c.Check(r.HasUnread(), check.Equals, false)
 }
 
-func (s *parseSuite) TestConsentReader_ReadBoolMap(c *check.C) {
+func (s *parseSuite) TestConsentReader_ReadPurposes(c *check.C) {
 	var tests = []struct {
 		expected map[int]bool
 		n        uint
