@@ -26,8 +26,11 @@ func (r *ConsentReader) ReadTime() time.Time {
 }
 
 func (r *ConsentReader) ReadString(n uint) string {
-	// TODO
-	return ""
+	var buf = make([]byte, 0, n)
+	for i := uint(0); i < n; i++ {
+		buf = append(buf, byte(r.ReadBits(6))+'a')
+	}
+	return string(buf)
 }
 
 func (r *ConsentReader) ReadPurposes(n uint) map[int]bool {

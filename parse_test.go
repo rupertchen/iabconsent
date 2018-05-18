@@ -1,6 +1,7 @@
 package iabconsent_test
 
 import (
+	"encoding/base64"
 	"time"
 
 	"github.com/LiveRamp/iabconsent"
@@ -37,6 +38,20 @@ func (s *parseSuite) TestConsentReader_ReadTime(c *check.C) {
 	var r = iabconsent.NewConsentReader([]byte{0x38, 0xdf, 0x6b, 0x35, 0xB0})
 	c.Check(r.ReadTime(), check.DeepEquals, time.Unix(1526665711, int64(500*time.Millisecond)).UTC())
 	c.Check(r.NumUnread(), check.Equals, 4)
+}
+
+func (s *parseSuite) TestConsentReader_ReadString(c *check.C) {
+	// A four character base64 string is the shortest string that decodes to a
+	// multiple of 8 bits.
+	var b64 = "ABCD"
+	var b, err = base64.RawURLEncoding.DecodeString(b64)
+	c.Assert(err, check.IsNil)
+
+	var r = iabconsent.NewConsentReader(b)
+	c.Check(r.ReadString(1), check.Equals, "a")
+	c.Check(r.ReadString(2), check.Equals, "bc")
+	c.Check(r.ReadString(1), check.Equals, "d")
+	c.Check(r.HasUnread(), check.Equals, false)
 }
 
 func (s *parseSuite) TestConsentReader_ReadBoolMap(c *check.C) {
