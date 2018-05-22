@@ -1,9 +1,11 @@
-package iabconsent
+package iabconsent_test
 
 import (
 	"sort"
 
 	"github.com/go-check/check"
+
+	"github.com/LiveRamp/iabconsent"
 )
 
 type ParsedConsentSuite struct{}
@@ -41,7 +43,7 @@ func (p *ParsedConsentSuite) TestParseConsentStrings(c *check.C) {
 
 	for _, tc := range cases {
 		c.Log(tc)
-		pc, err := Parse(tc.EncodedString)
+		pc, err := iabconsent.Parse(tc.EncodedString)
 		c.Check(err, check.IsNil)
 
 		normalizeParsedConsent(pc)
@@ -51,7 +53,7 @@ func (p *ParsedConsentSuite) TestParseConsentStrings(c *check.C) {
 	}
 }
 
-func normalizeParsedConsent(p *ParsedConsent) {
+func normalizeParsedConsent(p *iabconsent.ParsedConsent) {
 	sort.Slice(p.RangeEntries, func(i, j int) bool {
 		return p.RangeEntries[i].StartVendorID < p.RangeEntries[j].StartVendorID
 	})

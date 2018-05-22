@@ -4,8 +4,9 @@ import (
 	"encoding/base64"
 	"time"
 
-	"github.com/LiveRamp/iabconsent"
 	"github.com/go-check/check"
+
+	"github.com/LiveRamp/iabconsent"
 )
 
 type ParseSuite struct{}
@@ -48,13 +49,13 @@ func (s *ParseSuite) TestConsentReader_ReadString(c *check.C) {
 	c.Assert(err, check.IsNil)
 
 	var r = iabconsent.NewConsentReader(b)
-	c.Check(r.ReadString(1), check.Equals, "a")
-	c.Check(r.ReadString(2), check.Equals, "bc")
-	c.Check(r.ReadString(1), check.Equals, "d")
+	c.Check(r.ReadString(1), check.Equals, "A")
+	c.Check(r.ReadString(2), check.Equals, "BC")
+	c.Check(r.ReadString(1), check.Equals, "D")
 	c.Check(r.HasUnread(), check.Equals, false)
 }
 
-func (s *ParseSuite) TestConsentReader_ReadPurposes(c *check.C) {
+func (s *ParseSuite) TestConsentReader_ReadBitField(c *check.C) {
 	var tests = []struct {
 		expected map[int]bool
 		n        uint
@@ -71,7 +72,7 @@ func (s *ParseSuite) TestConsentReader_ReadPurposes(c *check.C) {
 
 	var r = iabconsent.NewConsentReader([]byte{0x5a})
 	for _, t := range tests {
-		c.Check(r.ReadPurposes(t.n), check.DeepEquals, t.expected)
+		c.Check(r.ReadBitField(t.n), check.DeepEquals, t.expected)
 	}
 	c.Check(r.HasUnread(), check.Equals, false)
 }

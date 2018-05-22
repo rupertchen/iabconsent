@@ -33,7 +33,7 @@ func (r *ConsentReader) ReadString(n uint) string {
 	return string(buf)
 }
 
-func (r *ConsentReader) ReadPurposes(n uint) map[int]bool {
+func (r *ConsentReader) ReadBitField(n uint) map[int]bool {
 	var m = make(map[int]bool)
 	for i := uint(0); i < n; i++ {
 		if r.ReadBool() {
@@ -93,7 +93,7 @@ func Parse(s string) (p *ParsedConsent, err error) {
 	p.ConsentScreen = r.ReadInt(6)
 	p.ConsentLanguage = r.ReadString(2)
 	p.VendorListVersion = r.ReadInt(12)
-	p.PurposesAllowed = r.ReadPurposes(24)
+	p.PurposesAllowed = r.ReadBitField(24)
 	p.MaxVendorID = r.ReadInt(16)
 
 	p.IsRangeEncoding = r.ReadBool()
@@ -102,7 +102,7 @@ func Parse(s string) (p *ParsedConsent, err error) {
 		p.NumEntries = r.ReadInt(12)
 		p.RangeEntries = r.ReadRangeEntries(uint(p.NumEntries))
 	} else {
-		p.approvedVendorIDs = r.ReadPurposes(uint(p.MaxVendorID))
+		p.ConsentedVendors = r.ReadBitField(uint(p.MaxVendorID))
 	}
 
 	return p, nil

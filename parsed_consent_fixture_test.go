@@ -1,6 +1,10 @@
-package iabconsent
+package iabconsent_test
 
-import "time"
+import (
+	"time"
+
+	"github.com/LiveRamp/iabconsent"
+)
 
 type consentType int
 
@@ -13,9 +17,11 @@ const (
 	MultipleRangesMixed
 )
 
+const nsPerDs = int64(time.Millisecond * 100)
+
 var testTime = time.Unix(1525378200, 8*nsPerDs).UTC()
 
-var consentFixtures = map[consentType]*ParsedConsent{
+var consentFixtures = map[consentType]*iabconsent.ParsedConsent{
 	// BONMj34ONMj34ABACDENALqAAAAAplY
 	BitField: {
 		Version:           1,
@@ -33,7 +39,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		},
 		MaxVendorID:     10,
 		IsRangeEncoding: false,
-		approvedVendorIDs: map[int]bool{
+		ConsentedVendors: map[int]bool{
 			1:  true,
 			2:  true,
 			5:  true,
@@ -61,7 +67,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRangeEncoding: true,
 		DefaultConsent:  false,
 		NumEntries:      1,
-		RangeEntries: []*RangeEntry{
+		RangeEntries: []*iabconsent.RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   123,
@@ -87,7 +93,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRangeEncoding: true,
 		DefaultConsent:  false,
 		NumEntries:      1,
-		RangeEntries: []*RangeEntry{
+		RangeEntries: []*iabconsent.RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   234,
@@ -113,7 +119,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRangeEncoding: true,
 		DefaultConsent:  false,
 		NumEntries:      2,
-		RangeEntries: []*RangeEntry{
+		RangeEntries: []*iabconsent.RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   123,
@@ -143,7 +149,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRangeEncoding: true,
 		DefaultConsent:  false,
 		NumEntries:      2,
-		RangeEntries: []*RangeEntry{
+		RangeEntries: []*iabconsent.RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   234,
@@ -173,7 +179,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRangeEncoding: true,
 		DefaultConsent:  false,
 		NumEntries:      2,
-		RangeEntries: []*RangeEntry{
+		RangeEntries: []*iabconsent.RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   123,

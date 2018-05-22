@@ -31,7 +31,7 @@ type ParsedConsent struct {
 	PurposesAllowed   map[int]bool
 	MaxVendorID       int
 	IsRangeEncoding   bool
-	approvedVendorIDs map[int]bool
+	ConsentedVendors  map[int]bool
 	DefaultConsent    bool
 	NumEntries        int
 	RangeEntries      []*RangeEntry
@@ -60,7 +60,7 @@ func (p *ParsedConsent) VendorAllowed(v int) bool {
 		return p.DefaultConsent
 	}
 
-	return p.approvedVendorIDs[v]
+	return p.ConsentedVendors[v]
 }
 
 // RangeEntry contains all fields in the RangeEncoding Entry
