@@ -78,16 +78,16 @@ func Parse2(s string) (p *ParsedConsent, err error) {
 	// This block of code directly describes the format of the payload.
 	p = &ParsedConsent{}
 	// TODO: Is setting consentString, still interesting?
-	p.version = r.ReadInt(6)
-	p.created = r.ReadTime()
-	p.lastUpdated = r.ReadTime()
-	p.cmpID = r.ReadInt(12)
-	p.cmpVersion = r.ReadInt(12)
-	p.consentScreen = r.ReadInt(6)
-	p.consentLanguage = r.ReadString(2)
-	p.vendorListVersion = r.ReadInt(12)
+	p.Version = r.ReadInt(6)
+	p.Created = r.ReadTime()
+	p.LastUpdated = r.ReadTime()
+	p.CMPID = r.ReadInt(12)
+	p.CMPVersion = r.ReadInt(12)
+	p.ConsentScreen = r.ReadInt(6)
+	p.ConsentLanguage = r.ReadString(2)
+	p.VendorListVersion = r.ReadInt(12)
 	p.purposesAllowed = r.ReadPurposes(24)
-	p.maxVendorID = r.ReadInt(16)
+	p.MaxVendorID = r.ReadInt(16)
 
 	var hasRanges = r.ReadBool()
 	if hasRanges {
@@ -95,7 +95,7 @@ func Parse2(s string) (p *ParsedConsent, err error) {
 		p.numEntries = r.ReadInt(12)
 		p.rangeEntries = r.ReadRangeEntries(uint(p.numEntries))
 	} else {
-		p.approvedVendorIDs = r.ReadPurposes(uint(p.maxVendorID))
+		p.approvedVendorIDs = r.ReadPurposes(uint(p.MaxVendorID))
 	}
 
 	return p, nil

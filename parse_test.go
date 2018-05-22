@@ -8,11 +8,11 @@ import (
 	"github.com/go-check/check"
 )
 
-type parseSuite struct{}
+type ParseSuite struct{}
 
-var _ = check.Suite(&parseSuite{})
+var _ = check.Suite(&ParseSuite{})
 
-func (s *parseSuite) TestConsentReader_ReadInt(c *check.C) {
+func (s *ParseSuite) TestConsentReader_ReadInt(c *check.C) {
 	var tests = []struct {
 		expected int
 		n        uint
@@ -30,7 +30,7 @@ func (s *parseSuite) TestConsentReader_ReadInt(c *check.C) {
 	c.Check(r.HasUnread(), check.Equals, false)
 }
 
-func (s *parseSuite) TestConsentReader_ReadTime(c *check.C) {
+func (s *ParseSuite) TestConsentReader_ReadTime(c *check.C) {
 	// 2018-05-18 17:48:31.5 +0000 UTC
 	// 1526665711.5 s
 	// 15266657115 deci-seconds
@@ -40,7 +40,7 @@ func (s *parseSuite) TestConsentReader_ReadTime(c *check.C) {
 	c.Check(r.NumUnread(), check.Equals, 4)
 }
 
-func (s *parseSuite) TestConsentReader_ReadString(c *check.C) {
+func (s *ParseSuite) TestConsentReader_ReadString(c *check.C) {
 	// A four character base64 string is the shortest string that decodes to a
 	// multiple of 8 bits.
 	var b64 = "ABCD"
@@ -54,7 +54,7 @@ func (s *parseSuite) TestConsentReader_ReadString(c *check.C) {
 	c.Check(r.HasUnread(), check.Equals, false)
 }
 
-func (s *parseSuite) TestConsentReader_ReadPurposes(c *check.C) {
+func (s *ParseSuite) TestConsentReader_ReadPurposes(c *check.C) {
 	var tests = []struct {
 		expected map[int]bool
 		n        uint
@@ -74,4 +74,26 @@ func (s *parseSuite) TestConsentReader_ReadPurposes(c *check.C) {
 		c.Check(r.ReadPurposes(t.n), check.DeepEquals, t.expected)
 	}
 	c.Check(r.HasUnread(), check.Equals, false)
+}
+
+func (s *ParseSuite) TestParse2_error(c *check.C) {
+	var tests = []struct {
+		EncodedString string
+		Error         string
+	}{
+		{
+			EncodedString: "//BONJ5bvONJ5bvAMAPyFRAL7AAAAMhuqKklS-gAAAAAAAAAAAAAAAAAAAAAAAAAA",
+			Error:         "illegal base64 data at input byte 0",
+		},
+		{
+			// base64.RawURLEncoding.EncodeToString([]byte("10011010110110101"))
+			EncodedString: "MTAwMTEwMTAxMTAxMTAxMDE",
+			Error:         "index out of range",
+		},
+	}
+
+	for _, t := range tests {
+		_, err := iabconsent.Parse2(t.EncodedString)
+		c.Check(err.Error(), check.Equals, t.Error)
+	}
 }

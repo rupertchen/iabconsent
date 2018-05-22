@@ -53,72 +53,21 @@ const (
 // ParsedConsent contains all fields defined in the
 // IAB Consent String 1.1 Spec.
 type ParsedConsent struct {
-	consentString     string
-	version           int
-	created           time.Time
-	lastUpdated       time.Time
-	cmpID             int
-	cmpVersion        int
-	consentScreen     int
-	consentLanguage   string
-	vendorListVersion int
+	Version           int
+	Created           time.Time
+	LastUpdated       time.Time
+	CMPID             int
+	CMPVersion        int
+	ConsentScreen     int
+	ConsentLanguage   string
+	VendorListVersion int
 	purposesAllowed   map[int]bool
-	maxVendorID       int
+	MaxVendorID       int
 	isRange           bool
 	approvedVendorIDs map[int]bool
 	defaultConsent    bool
 	numEntries        int
 	rangeEntries      []*RangeEntry
-}
-
-// ConsentString returns the consentString.
-func (p *ParsedConsent) ConsentString() string {
-	return p.consentString
-}
-
-// Version returns the version.
-func (p *ParsedConsent) Version() int {
-	return p.version
-}
-
-// Created returns the created.
-func (p *ParsedConsent) Created() time.Time {
-	return p.created
-}
-
-// LastUpdated returns lastUpdated.
-func (p *ParsedConsent) LastUpdated() time.Time {
-	return p.lastUpdated
-}
-
-// CmpID returns cmpID.
-func (p *ParsedConsent) CmpID() int {
-	return p.cmpID
-}
-
-// CmpVersion returns cmpVersion.
-func (p *ParsedConsent) CmpVersion() int {
-	return p.cmpVersion
-}
-
-// ConsentScreen returns consentScreen.
-func (p *ParsedConsent) ConsentScreen() int {
-	return p.consentScreen
-}
-
-// ConsentLanguage returns consentLanguage.
-func (p *ParsedConsent) ConsentLanguage() string {
-	return p.consentLanguage
-}
-
-// VendorListVersion returns vendorListVersion.
-func (p *ParsedConsent) VendorListVersion() int {
-	return p.vendorListVersion
-}
-
-// MaxVendorID returns maxVendorID.
-func (p *ParsedConsent) MaxVendorID() int {
-	return p.maxVendorID
 }
 
 // PurposeAllowed returns true if the consent ID |pu|
@@ -291,16 +240,16 @@ func Parse(s string) (*ParsedConsent, error) {
 
 	return &ParsedConsent{
 		consentString:     bs.value,
-		version:           version,
-		created:           created,
-		lastUpdated:       updated,
-		cmpID:             cmpID,
-		cmpVersion:        cmpVersion,
-		consentScreen:     consentScreen,
-		consentLanguage:   consentLanguage,
-		vendorListVersion: vendorListVersion,
+		Version:           version,
+		Created:           created,
+		LastUpdated:       updated,
+		CMPID:             cmpID,
+		CMPVersion:        cmpVersion,
+		ConsentScreen:     consentScreen,
+		ConsentLanguage:   consentLanguage,
+		VendorListVersion: vendorListVersion,
 		purposesAllowed:   purposesAllowed,
-		maxVendorID:       maxVendorID,
+		MaxVendorID:       maxVendorID,
 		isRange:           isRangeEntries,
 		approvedVendorIDs: approvedVendorIDs,
 		defaultConsent:    defaultConsent,
