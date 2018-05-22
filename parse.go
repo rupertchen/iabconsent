@@ -8,6 +8,13 @@ import (
 	"github.com/rupertchen/go-bits"
 )
 
+const (
+	// dsPerS is deciseconds per second
+	dsPerS = 10
+	// nsPerDs is nanoseconds per decisecond
+	nsPerDs = int64(time.Millisecond * 100)
+)
+
 type ConsentReader struct {
 	*bits.Reader
 }
