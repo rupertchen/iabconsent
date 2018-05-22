@@ -14,47 +14,7 @@ for use in the LiveRamp Pixel Server.
 package iabconsent
 
 import (
-	"fmt"
 	"time"
-)
-
-// These constants represent the bit offsets and sizes of the
-// fields in the IAB Consent String 1.1 Spec.
-const (
-	VersionBitOffset        = 0
-	VersionBitSize          = 6
-	CreatedBitOffset        = 6
-	CreatedBitSize          = 36
-	UpdatedBitOffset        = 42
-	UpdatedBitSize          = 36
-	CmpIdOffset             = 78
-	CmpIdSize               = 12
-	CmpVersionOffset        = 90
-	CmpVersionSize          = 12
-	ConsentScreenSizeOffset = 102
-	ConsentScreenSize       = 6
-	ConsentLanguageOffset   = 108
-	ConsentLanguageSize     = 12
-	VendorListVersionOffset = 120
-	VendorListVersionSize   = 12
-	PurposesOffset          = 132
-	PurposesSize            = 24
-	MaxVendorIdOffset       = 156
-	MaxVendorIdSize         = 16
-	EncodingTypeOffset      = 172
-	VendorBitFieldOffset    = 173
-	DefaultConsentOffset    = 173
-	NumEntriesOffset        = 174
-	NumEntriesSize          = 12
-	RangeEntryOffset        = 186
-	VendorIdSize            = 16
-)
-
-type EncodingType int
-
-const (
-	BitFieldEncoding EncodingType = iota
-	RangeEncoding
 )
 
 // ParsedConsent contains all fields defined in the
@@ -70,12 +30,11 @@ type ParsedConsent struct {
 	VendorListVersion int
 	PurposesAllowed   map[int]bool
 	MaxVendorID       int
-	IsRange           bool
-	EncodingType      EncodingType
+	IsRangeEncoding   bool
 	approvedVendorIDs map[int]bool
 	DefaultConsent    bool
 	NumEntries        int
-	rangeEntries      []*RangeEntry
+	RangeEntries      []*RangeEntry
 }
 
 // EveryPurposeAllowed returns true iff every purpose number in ps exists in
@@ -89,25 +48,19 @@ func (p *ParsedConsent) EveryPurposeAllowed(ps []int) bool {
 	return true
 }
 
-// VendorAllowed returns true if the ParsedConsent contains
-// affirmative consent for Vendor of ID |i|.
-func (p *ParsedConsent) VendorAllowed(i int) bool {
-	switch p.EncodingType {
-	case RangeEncoding:
-		// DefaultConsent indicates the consent for those not covered by any
-		// vendor ranges.
-		for _, re := range p.rangeEntries {
-			if re.StartVendorID <= i &&
-				re.EndVendorID >= i {
+// VendorAllowed returns true if the ParsedConsent contains affirmative consent
+// for VendorID v.
+func (p *ParsedConsent) VendorAllowed(v int) bool {
+	if p.IsRangeEncoding {
+		for _, re := range p.RangeEntries {
+			if re.StartVendorID <= v && v <= re.EndVendorID {
 				return !p.DefaultConsent
 			}
 		}
 		return p.DefaultConsent
-	case BitFieldEncoding:
-		return p.approvedVendorIDs[i]
-	default:
-		panic(fmt.Sprintf("Unknown EncodingType: %v", p.EncodingType))
 	}
+
+	return p.approvedVendorIDs[v]
 }
 
 // RangeEntry contains all fields in the RangeEncoding Entry

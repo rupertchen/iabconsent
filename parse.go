@@ -28,7 +28,7 @@ func (r *ConsentReader) ReadTime() time.Time {
 func (r *ConsentReader) ReadString(n uint) string {
 	var buf = make([]byte, 0, n)
 	for i := uint(0); i < n; i++ {
-		buf = append(buf, byte(r.ReadBits(6))+'a')
+		buf = append(buf, byte(r.ReadBits(6))+'A')
 	}
 	return string(buf)
 }
@@ -96,14 +96,12 @@ func Parse(s string) (p *ParsedConsent, err error) {
 	p.PurposesAllowed = r.ReadPurposes(24)
 	p.MaxVendorID = r.ReadInt(16)
 
-	var hasRanges = r.ReadBool()
-	if hasRanges {
-		p.EncodingType = RangeEncoding
+	p.IsRangeEncoding = r.ReadBool()
+	if p.IsRangeEncoding {
 		p.DefaultConsent = r.ReadBool()
 		p.NumEntries = r.ReadInt(12)
-		p.rangeEntries = r.ReadRangeEntries(uint(p.NumEntries))
+		p.RangeEntries = r.ReadRangeEntries(uint(p.NumEntries))
 	} else {
-		p.EncodingType = BitFieldEncoding
 		p.approvedVendorIDs = r.ReadPurposes(uint(p.MaxVendorID))
 	}
 

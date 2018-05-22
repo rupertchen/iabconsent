@@ -52,8 +52,8 @@ func (p *ParsedConsentSuite) TestParseConsentStrings(c *check.C) {
 }
 
 func normalizeParsedConsent(p *ParsedConsent) {
-	sort.Slice(p.rangeEntries, func(i, j int) bool {
-		return p.rangeEntries[i].StartVendorID < p.rangeEntries[j].StartVendorID
+	sort.Slice(p.RangeEntries, func(i, j int) bool {
+		return p.RangeEntries[i].StartVendorID < p.RangeEntries[j].StartVendorID
 	})
 }
 
