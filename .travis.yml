@@ -5,8 +5,5 @@ go:
   - 1.9.x
   - 1.10.x
 
-before_install:
-  - go get -v github.com/go-check/check
-
 script:
   - go test -v ./...
