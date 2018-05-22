@@ -43,9 +43,8 @@ func (r *ConsentReader) ReadPurposes(n uint) map[int]bool {
 	return m
 }
 
-// TODO: export rangeEntry or unexport this func
-func (r *ConsentReader) ReadRangeEntries(n uint) []*rangeEntry {
-	var ret = make([]*rangeEntry, 0, n)
+func (r *ConsentReader) ReadRangeEntries(n uint) []*RangeEntry {
+	var ret = make([]*RangeEntry, 0, n)
 	for i := uint(0); i < n; i++ {
 		var isRange = r.ReadBool()
 		var start, end int
@@ -55,7 +54,7 @@ func (r *ConsentReader) ReadRangeEntries(n uint) []*rangeEntry {
 		} else {
 			end = start
 		}
-		ret = append(ret, &rangeEntry{StartVendorID: start, EndVendorID: end})
+		ret = append(ret, &RangeEntry{StartVendorID: start, EndVendorID: end})
 	}
 	return ret
 }

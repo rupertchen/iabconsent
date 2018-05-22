@@ -64,7 +64,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		approvedVendorIDs: map[int]bool{},
 		defaultConsent:    false,
 		numEntries:        1,
-		rangeEntries: []*rangeEntry{
+		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   123,
@@ -92,7 +92,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		approvedVendorIDs: map[int]bool{},
 		defaultConsent:    false,
 		numEntries:        1,
-		rangeEntries: []*rangeEntry{
+		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   234,
@@ -120,7 +120,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		approvedVendorIDs: map[int]bool{},
 		defaultConsent:    false,
 		numEntries:        2,
-		rangeEntries: []*rangeEntry{
+		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   123,
@@ -152,7 +152,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		approvedVendorIDs: map[int]bool{},
 		defaultConsent:    false,
 		numEntries:        2,
-		rangeEntries: []*rangeEntry{
+		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   234,
@@ -184,7 +184,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		approvedVendorIDs: map[int]bool{},
 		defaultConsent:    false,
 		numEntries:        2,
-		rangeEntries: []*rangeEntry{
+		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
 				EndVendorID:   123,

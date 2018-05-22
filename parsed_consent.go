@@ -68,7 +68,7 @@ type ParsedConsent struct {
 	approvedVendorIDs map[int]bool
 	defaultConsent    bool
 	numEntries        int
-	rangeEntries      []*rangeEntry
+	rangeEntries      []*RangeEntry
 }
 
 // ConsentString returns the consentString.
@@ -160,11 +160,11 @@ func (p *ParsedConsent) VendorAllowed(i int) bool {
 	return p.defaultConsent
 }
 
-// rangeEntry contains all fields in the Range Entry
+// RangeEntry contains all fields in the Range Entry
 // portion of the Vendor Consent String. This portion
 // of the consent string is only populated when the
 // EncodingType field is set to 1.
-type rangeEntry struct {
+type RangeEntry struct {
 	StartVendorID int
 	EndVendorID   int
 }
@@ -236,7 +236,7 @@ func Parse(s string) (*ParsedConsent, error) {
 		return nil, err
 	}
 
-	var rangeEntries []*rangeEntry
+	var rangeEntries []*RangeEntry
 
 	if isRangeEntries {
 		defaultConsent, err = bs.ParseBool(DefaultConsentOffset)
@@ -277,7 +277,7 @@ func Parse(s string) (*ParsedConsent, error) {
 				parsedBits += VendorIdSize
 			}
 
-			rangeEntries = append(rangeEntries, &rangeEntry{
+			rangeEntries = append(rangeEntries, &RangeEntry{
 				StartVendorID: startVendorID,
 				EndVendorID:   endVendorID,
 			})
