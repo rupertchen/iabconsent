@@ -17,8 +17,7 @@ import (
 	"time"
 )
 
-// ParsedConsent contains all fields defined in the
-// IAB Consent String 1.1 Spec.
+// ParsedConsent represents data extracted from an IAB Consent String, v1.1.
 type ParsedConsent struct {
 	Version           int
 	Created           time.Time
@@ -63,10 +62,8 @@ func (p *ParsedConsent) VendorAllowed(v int) bool {
 	return p.ConsentedVendors[v]
 }
 
-// RangeEntry contains all fields in the RangeEncoding Entry
-// portion of the Vendor Consent String. This portion
-// of the consent string is only populated when the
-// EncodingType field is set to 1.
+// RangeEntry defines an inclusive range of vendor IDs from StartVendorID to
+// EndVendorID.
 type RangeEntry struct {
 	StartVendorID int
 	EndVendorID   int
