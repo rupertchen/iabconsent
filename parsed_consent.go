@@ -14,7 +14,7 @@ for use in the LiveRamp Pixel Server.
 package iabconsent
 
 import (
-	"encoding/base64"
+	"fmt"
 	"time"
 )
 
@@ -50,6 +50,13 @@ const (
 	VendorIdSize            = 16
 )
 
+type EncodingType int
+
+const (
+	BitFieldEncoding EncodingType = iota
+	RangeEncoding
+)
+
 // ParsedConsent contains all fields defined in the
 // IAB Consent String 1.1 Spec.
 type ParsedConsent struct {
@@ -64,9 +71,10 @@ type ParsedConsent struct {
 	PurposesAllowed   map[int]bool
 	MaxVendorID       int
 	IsRange           bool
+	EncodingType      EncodingType
 	approvedVendorIDs map[int]bool
 	DefaultConsent    bool
-	numEntries        int
+	NumEntries        int
 	rangeEntries      []*RangeEntry
 }
 
@@ -84,169 +92,29 @@ func (p *ParsedConsent) EveryPurposeAllowed(ps []int) bool {
 // VendorAllowed returns true if the ParsedConsent contains
 // affirmative consent for Vendor of ID |i|.
 func (p *ParsedConsent) VendorAllowed(i int) bool {
-	if p.IsRange {
-		// DefaultConsent indicates the consent for those
-		// not covered by any Range Entries. Vendors covered
-		// in rangeEntries have the opposite consent of
-		// DefaultConsent.
+	switch p.EncodingType {
+	case RangeEncoding:
+		// DefaultConsent indicates the consent for those not covered by any
+		// vendor ranges.
 		for _, re := range p.rangeEntries {
 			if re.StartVendorID <= i &&
 				re.EndVendorID >= i {
 				return !p.DefaultConsent
 			}
 		}
-	} else {
-		var _, ok = p.approvedVendorIDs[i]
-		return ok
+		return p.DefaultConsent
+	case BitFieldEncoding:
+		return p.approvedVendorIDs[i]
+	default:
+		panic(fmt.Sprintf("Unknown EncodingType: %v", p.EncodingType))
 	}
-	return p.DefaultConsent
 }
 
-// RangeEntry contains all fields in the Range Entry
+// RangeEntry contains all fields in the RangeEncoding Entry
 // portion of the Vendor Consent String. This portion
 // of the consent string is only populated when the
 // EncodingType field is set to 1.
 type RangeEntry struct {
 	StartVendorID int
 	EndVendorID   int
-}
-
-// Parse takes a base64 Raw URL Encoded string which represents
-// a Vendor Consent String and returns a ParsedConsent with
-// it's fields populated with the values stored in the string.
-// Example Usage:
-//	var pc, err = iabconsent.Parse("BONJ5bvONJ5bvAMAPyFRAL7AAAAMhuqKklS-gAAAAAAAAAAAAAAAAAAAAAAAAAA")
-func Parse(s string) (*ParsedConsent, error) {
-	var b []byte
-	var err error
-
-	b, err = base64.RawURLEncoding.DecodeString(s)
-	if err != nil {
-		return nil, err
-	}
-
-	var bs = ParseBytes(b)
-	var version, cmpID, cmpVersion, consentScreen, vendorListVersion, maxVendorID, numEntries int
-	var created, updated time.Time
-	var isRangeEntries, defaultConsent, isIDRange bool
-	var consentLanguage string
-	var purposesAllowed = make(map[int]bool)
-	var approvedVendorIDs = make(map[int]bool)
-
-	version, err = bs.ParseInt(VersionBitOffset, VersionBitSize)
-	if err != nil {
-		return nil, err
-	}
-	created, err = bs.ParseTime(CreatedBitOffset, CreatedBitSize)
-	if err != nil {
-		return nil, err
-	}
-	updated, err = bs.ParseTime(UpdatedBitOffset, UpdatedBitSize)
-	if err != nil {
-		return nil, err
-	}
-	cmpID, err = bs.ParseInt(CmpIdOffset, CmpIdSize)
-	if err != nil {
-		return nil, err
-	}
-	cmpVersion, err = bs.ParseInt(CmpVersionOffset, CmpVersionSize)
-	if err != nil {
-		return nil, err
-	}
-	consentScreen, err = bs.ParseInt(ConsentScreenSizeOffset, ConsentScreenSize)
-	if err != nil {
-		return nil, err
-	}
-	consentLanguage, err = bs.ParseString(ConsentLanguageOffset, ConsentLanguageSize)
-	if err != nil {
-		return nil, err
-	}
-	vendorListVersion, err = bs.ParseInt(VendorListVersionOffset, VendorListVersionSize)
-	if err != nil {
-		return nil, err
-	}
-	purposesAllowed, err = bs.ParseBitList(PurposesOffset, PurposesSize)
-	if err != nil {
-		return nil, err
-	}
-	maxVendorID, err = bs.ParseInt(MaxVendorIdOffset, MaxVendorIdSize)
-	if err != nil {
-		return nil, err
-	}
-	isRangeEntries, err = bs.ParseBool(EncodingTypeOffset)
-	if err != nil {
-		return nil, err
-	}
-
-	var rangeEntries []*RangeEntry
-
-	if isRangeEntries {
-		defaultConsent, err = bs.ParseBool(DefaultConsentOffset)
-		if err != nil {
-			return nil, err
-		}
-		numEntries, err = bs.ParseInt(NumEntriesOffset, NumEntriesSize)
-		if err != nil {
-			return nil, err
-		}
-
-		// Track how many range entry bits we've parsed since it's variable.
-		var parsedBits = 0
-
-		for i := 0; i < numEntries; i++ {
-			var startVendorID, endVendorID int
-
-			isIDRange, err = bs.ParseBool(RangeEntryOffset + parsedBits)
-			parsedBits++
-
-			if isIDRange {
-				startVendorID, err = bs.ParseInt(RangeEntryOffset+parsedBits, VendorIdSize)
-				if err != nil {
-					return nil, err
-				}
-				parsedBits += VendorIdSize
-				endVendorID, err = bs.ParseInt(RangeEntryOffset+parsedBits, VendorIdSize)
-				if err != nil {
-					return nil, err
-				}
-				parsedBits += VendorIdSize
-			} else {
-				startVendorID, err = bs.ParseInt(RangeEntryOffset+parsedBits, VendorIdSize)
-				if err != nil {
-					return nil, err
-				}
-				endVendorID = startVendorID
-				parsedBits += VendorIdSize
-			}
-
-			rangeEntries = append(rangeEntries, &RangeEntry{
-				StartVendorID: startVendorID,
-				EndVendorID:   endVendorID,
-			})
-		}
-	} else {
-		approvedVendorIDs, err = bs.ParseBitList(VendorBitFieldOffset, maxVendorID)
-		if err != nil {
-			return nil, err
-		}
-	}
-
-	return &ParsedConsent{
-		consentString:     bs.value,
-		Version:           version,
-		Created:           created,
-		LastUpdated:       updated,
-		CMPID:             cmpID,
-		CMPVersion:        cmpVersion,
-		ConsentScreen:     consentScreen,
-		ConsentLanguage:   consentLanguage,
-		VendorListVersion: vendorListVersion,
-		PurposesAllowed:   purposesAllowed,
-		MaxVendorID:       maxVendorID,
-		IsRange:           isRangeEntries,
-		approvedVendorIDs: approvedVendorIDs,
-		DefaultConsent:    defaultConsent,
-		numEntries:        numEntries,
-		rangeEntries:      rangeEntries,
-	}, nil
 }

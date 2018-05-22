@@ -5,7 +5,7 @@ import "time"
 type consentType int
 
 const (
-	BitField consentType = iota
+	BitField                   consentType = iota
 	SingleRangeWithSingleID
 	SingleRangeWithRange
 	MultipleRangesWithSingleID
@@ -63,7 +63,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
 		DefaultConsent:    false,
-		numEntries:        1,
+		NumEntries:        1,
 		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
@@ -91,7 +91,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
 		DefaultConsent:    false,
-		numEntries:        1,
+		NumEntries:        1,
 		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
@@ -119,7 +119,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
 		DefaultConsent:    false,
-		numEntries:        2,
+		NumEntries:        2,
 		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
@@ -151,7 +151,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
 		DefaultConsent:    false,
-		numEntries:        2,
+		NumEntries:        2,
 		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,
@@ -183,7 +183,7 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
 		DefaultConsent:    false,
-		numEntries:        2,
+		NumEntries:        2,
 		rangeEntries: []*RangeEntry{
 			{
 				StartVendorID: 123,

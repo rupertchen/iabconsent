@@ -59,7 +59,14 @@ func (r *ConsentReader) ReadRangeEntries(n uint) []*RangeEntry {
 	return ret
 }
 
-func Parse2(s string) (p *ParsedConsent, err error) {
+// Parse takes a base64 Raw URL Encoded string which represents
+// a Vendor Consent String and returns a ParsedConsent with
+// it's fields populated with the values stored in the string.
+//
+// Example Usage:
+//
+//   var pc, err = iabconsent.Parse("BONJ5bvONJ5bvAMAPyFRAL7AAAAMhuqKklS-gAAAAAAAAAAAAAAAAAAAAAAAAAA")
+func Parse(s string) (p *ParsedConsent, err error) {
 	// This func leverages named returns to return partially parsed content when there is an error
 
 	defer func() {
@@ -91,10 +98,12 @@ func Parse2(s string) (p *ParsedConsent, err error) {
 
 	var hasRanges = r.ReadBool()
 	if hasRanges {
+		p.EncodingType = RangeEncoding
 		p.DefaultConsent = r.ReadBool()
-		p.numEntries = r.ReadInt(12)
-		p.rangeEntries = r.ReadRangeEntries(uint(p.numEntries))
+		p.NumEntries = r.ReadInt(12)
+		p.rangeEntries = r.ReadRangeEntries(uint(p.NumEntries))
 	} else {
+		p.EncodingType = BitFieldEncoding
 		p.approvedVendorIDs = r.ReadPurposes(uint(p.MaxVendorID))
 	}
 

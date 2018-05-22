@@ -93,7 +93,7 @@ func (s *ParseSuite) TestParse2_error(c *check.C) {
 	}
 
 	for _, t := range tests {
-		_, err := iabconsent.Parse2(t.EncodedString)
+		_, err := iabconsent.Parse(t.EncodedString)
 		c.Check(err.Error(), check.Equals, t.Error)
 	}
 }
