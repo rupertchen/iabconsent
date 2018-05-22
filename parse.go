@@ -91,7 +91,6 @@ func Parse(s string) (p *ParsedConsent, err error) {
 
 	// This block of code directly describes the format of the payload.
 	p = &ParsedConsent{}
-	// TODO: Is setting consentString, still interesting?
 	p.Version = r.ReadInt(6)
 	p.Created = r.ReadTime()
 	p.LastUpdated = r.ReadTime()
