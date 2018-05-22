@@ -86,12 +86,12 @@ func Parse2(s string) (p *ParsedConsent, err error) {
 	p.ConsentScreen = r.ReadInt(6)
 	p.ConsentLanguage = r.ReadString(2)
 	p.VendorListVersion = r.ReadInt(12)
-	p.purposesAllowed = r.ReadPurposes(24)
+	p.PurposesAllowed = r.ReadPurposes(24)
 	p.MaxVendorID = r.ReadInt(16)
 
 	var hasRanges = r.ReadBool()
 	if hasRanges {
-		p.defaultConsent = r.ReadBool()
+		p.DefaultConsent = r.ReadBool()
 		p.numEntries = r.ReadInt(12)
 		p.rangeEntries = r.ReadRangeEntries(uint(p.numEntries))
 	} else {

@@ -61,27 +61,20 @@ type ParsedConsent struct {
 	ConsentScreen     int
 	ConsentLanguage   string
 	VendorListVersion int
-	purposesAllowed   map[int]bool
+	PurposesAllowed   map[int]bool
 	MaxVendorID       int
-	isRange           bool
+	IsRange           bool
 	approvedVendorIDs map[int]bool
-	defaultConsent    bool
+	DefaultConsent    bool
 	numEntries        int
 	rangeEntries      []*RangeEntry
 }
 
-// PurposeAllowed returns true if the consent ID |pu|
-// exists in the ParsedConsent and false otherwise.
-func (p *ParsedConsent) PurposeAllowed(pu int) bool {
-	_, ok := p.purposesAllowed[pu]
-	return ok
-}
-
-// PurposesAllowed returns true if each consent ID in |pu|
-// exists in the ParsedConsent, and false if any does not.
-func (p *ParsedConsent) PurposesAllowed(pu []int) bool {
-	for _, rp := range pu {
-		if !p.PurposeAllowed(rp) {
+// EveryPurposeAllowed returns true iff every purpose number in ps exists in
+// the ParsedConsent, otherwise false.
+func (p *ParsedConsent) EveryPurposeAllowed(ps []int) bool {
+	for _, rp := range ps {
+		if !p.PurposesAllowed[rp] {
 			return false
 		}
 	}
@@ -91,22 +84,22 @@ func (p *ParsedConsent) PurposesAllowed(pu []int) bool {
 // VendorAllowed returns true if the ParsedConsent contains
 // affirmative consent for Vendor of ID |i|.
 func (p *ParsedConsent) VendorAllowed(i int) bool {
-	if p.isRange {
-		// defaultConsent indicates the consent for those
+	if p.IsRange {
+		// DefaultConsent indicates the consent for those
 		// not covered by any Range Entries. Vendors covered
 		// in rangeEntries have the opposite consent of
-		// defaultConsent.
+		// DefaultConsent.
 		for _, re := range p.rangeEntries {
 			if re.StartVendorID <= i &&
 				re.EndVendorID >= i {
-				return !p.defaultConsent
+				return !p.DefaultConsent
 			}
 		}
 	} else {
 		var _, ok = p.approvedVendorIDs[i]
 		return ok
 	}
-	return p.defaultConsent
+	return p.DefaultConsent
 }
 
 // RangeEntry contains all fields in the Range Entry
@@ -248,11 +241,11 @@ func Parse(s string) (*ParsedConsent, error) {
 		ConsentScreen:     consentScreen,
 		ConsentLanguage:   consentLanguage,
 		VendorListVersion: vendorListVersion,
-		purposesAllowed:   purposesAllowed,
+		PurposesAllowed:   purposesAllowed,
 		MaxVendorID:       maxVendorID,
-		isRange:           isRangeEntries,
+		IsRange:           isRangeEntries,
 		approvedVendorIDs: approvedVendorIDs,
-		defaultConsent:    defaultConsent,
+		DefaultConsent:    defaultConsent,
 		numEntries:        numEntries,
 		rangeEntries:      rangeEntries,
 	}, nil

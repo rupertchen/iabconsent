@@ -27,13 +27,13 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		ConsentScreen:     3,
 		ConsentLanguage:   "EN",
 		VendorListVersion: 11,
-		purposesAllowed: map[int]bool{
+		PurposesAllowed: map[int]bool{
 			1: true,
 			3: true,
 			5: true,
 		},
 		MaxVendorID: 10,
-		isRange:     false,
+		IsRange:     false,
 		approvedVendorIDs: map[int]bool{
 			1:  true,
 			2:  true,
@@ -54,15 +54,15 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		ConsentScreen:     3,
 		ConsentLanguage:   "EN",
 		VendorListVersion: 11,
-		purposesAllowed: map[int]bool{
+		PurposesAllowed: map[int]bool{
 			1: true,
 			3: true,
 			5: true,
 		},
 		MaxVendorID:       10,
-		isRange:           true,
+		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
-		defaultConsent:    false,
+		DefaultConsent:    false,
 		numEntries:        1,
 		rangeEntries: []*RangeEntry{
 			{
@@ -82,15 +82,15 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		ConsentScreen:     3,
 		ConsentLanguage:   "EN",
 		VendorListVersion: 11,
-		purposesAllowed: map[int]bool{
+		PurposesAllowed: map[int]bool{
 			1: true,
 			3: true,
 			5: true,
 		},
 		MaxVendorID:       10,
-		isRange:           true,
+		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
-		defaultConsent:    false,
+		DefaultConsent:    false,
 		numEntries:        1,
 		rangeEntries: []*RangeEntry{
 			{
@@ -110,15 +110,15 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		ConsentScreen:     3,
 		ConsentLanguage:   "EN",
 		VendorListVersion: 11,
-		purposesAllowed: map[int]bool{
+		PurposesAllowed: map[int]bool{
 			1: true,
 			3: true,
 			5: true,
 		},
 		MaxVendorID:       10,
-		isRange:           true,
+		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
-		defaultConsent:    false,
+		DefaultConsent:    false,
 		numEntries:        2,
 		rangeEntries: []*RangeEntry{
 			{
@@ -142,15 +142,15 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		ConsentScreen:     3,
 		ConsentLanguage:   "EN",
 		VendorListVersion: 11,
-		purposesAllowed: map[int]bool{
+		PurposesAllowed: map[int]bool{
 			1: true,
 			3: true,
 			5: true,
 		},
 		MaxVendorID:       10,
-		isRange:           true,
+		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
-		defaultConsent:    false,
+		DefaultConsent:    false,
 		numEntries:        2,
 		rangeEntries: []*RangeEntry{
 			{
@@ -174,15 +174,15 @@ var consentFixtures = map[consentType]*ParsedConsent{
 		ConsentScreen:     3,
 		ConsentLanguage:   "EN",
 		VendorListVersion: 11,
-		purposesAllowed: map[int]bool{
+		PurposesAllowed: map[int]bool{
 			1: true,
 			3: true,
 			5: true,
 		},
 		MaxVendorID:       10,
-		isRange:           true,
+		IsRange:           true,
 		approvedVendorIDs: map[int]bool{},
-		defaultConsent:    false,
+		DefaultConsent:    false,
 		numEntries:        2,
 		rangeEntries: []*RangeEntry{
 			{
